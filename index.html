@@ -1,78 +1,307 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Apna Market Pakistan</title>
-  <style>
-    body { font-family: Arial; margin: 0; background: #f1f5fb; color: #17345c; }
-    header { background: #123b75; color: white; padding: 22px; text-align: center; }
-    input, select, button { padding: 12px; margin: 5px 0; border-radius: 8px; border: 1px solid #ccc; }
-    main { max-width: 800px; margin: auto; padding: 18px; }
-    .card { background: white; padding: 16px; border-radius: 12px; margin: 12px 0; }
-    button { background: #ffbf3f; color: #17345c; font-weight: bold; border: none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apna Market Pakistan</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#f2f5fa;color:#18243a}
+header{background:#123b75;color:white;padding:17px}
+.brand{font-size:26px;font-weight:bold}
+nav{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+button{border:0;border-radius:8px;padding:10px 13px;background:#ffbf3f;color:#18345c;font-weight:bold;cursor:pointer}
+nav button{background:#ffffff20;color:white;border:1px solid #ffffff55}
+nav button.active{background:#ffbf3f;color:#17345c}
+main{max-width:1000px;margin:auto;padding:15px}
+h2{font-size:21px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #ccd5e3;border-radius:8px;margin:5px 0 12px;background:white}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1}
+.categories,.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.category,.card,.panel{background:white;border:1px solid #e0e7f0;border-radius:12px;padding:13px}
+.category{text-align:center;color:#17457f;font-weight:bold;cursor:pointer}
+.category span{display:block;font-size:27px;margin-bottom:6px}
+.card h3{font-size:16px;margin:5px 0}
+.price{font-size:20px;color:#174b91;font-weight:bold;margin:8px 0}
+.small{font-size:12px;color:#65748b;line-height:1.5}
+.panel{margin-bottom:15px}
+.hidden{display:none!important}
+.status{display:inline-block;padding:5px 8px;border-radius:20px;background:#fff0c2;color:#795500;font-size:12px;font-weight:bold}
+.Published{background:#d9f8e8;color:#12633f}
+.Rejected{background:#fee2e2;color:#991b1b}
+.notice{background:#fff7df;padding:11px;border-radius:9px;font-size:13px;line-height:1.5;margin:12px 0}
+.blue{background:#1956a5;color:white}
+.red{background:#b42318;color:white}
+.green{background:#16845b;color:white}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.full{grid-column:1/-1}
+footer{text-align:center;padding:22px;color:#66758a;font-size:12px}
+@media(min-width:650px){.categories{grid-template-columns:repeat(4,1fr)}.products{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:420px){.formgrid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
 </head>
 <body>
-  <header>
-    <h1>🛍️ Apna Market</h1>
-    <p>Buy and Sell Across Pakistan</p>
-  </header>
-  <main>
-    <h2>Search Products</h2>
-    <input id="search" placeholder="Search products..." oninput="filterAds()">
-    <select id="city" onchange="filterAds()">
-      <option value="">All Cities</option>
-      <option>Lahore</option>
-      <option>Karachi</option>
-      <option>Islamabad</option>
-      <option>Peshawar</option>
-    </select>
-    <h2>Latest Ads</h2>
-    <div id="ads">
-      <div class="card" data-city="Lahore">
-        <h3>📺 32 Inch Smart LED TV</h3>
-        <b>Rs 25,000</b><p>Lahore · Electronics</p>
-      </div>
-      <div class="card" data-city="Karachi">
-        <h3>📱 Android Mobile Phone</h3>
-        <b>Rs 32,000</b><p>Karachi · Mobiles</p>
-      </div>
-      <div class="card" data-city="Islamabad">
-        <h3>🛋️ Furniture Set</h3>
-        <b>Rs 18,000</b><p>Islamabad · Furniture</p>
-      </div>
+<header>
+ <div class="brand">🛍️ Apna Market</div>
+ <p>Buy and Sell Across Pakistan</p>
+ <nav>
+  <button class="active" onclick="page('home',this)">Home</button>
+  <button onclick="page('post',this)">Post Free Ad</button>
+  <button onclick="page('myads',this)">My Ads</button>
+  <button onclick="page('admin',this)">Admin Panel</button>
+  <button onclick="page('brands',this)">Brand Requests</button>
+ </nav>
+</header>
+
+<main>
+<section id="home">
+ <h2>Find Products Across Pakistan</h2>
+ <div class="row">
+  <input id="query" placeholder="Search products..." oninput="render()">
+  <select id="city" onchange="render()">
+   <option value="">All Cities</option>
+   <option>Lahore</option><option>Karachi</option>
+   <option>Islamabad</option><option>Peshawar</option>
+   <option>Quetta</option><option>Multan</option>
+   <option>Faisalabad</option>
+  </select>
+ </div>
+ <h2>Categories</h2>
+ <div class="categories" id="categories"></div>
+ <p><button class="blue" onclick="categoryFilter('')">All Categories</button></p>
+ <h2>Latest Published Ads</h2>
+ <div class="products" id="products"></div>
+</section>
+
+<section id="post" class="hidden">
+ <div class="panel">
+  <h2>Post a Free Ad</h2>
+  <div class="notice">Your ad will be Pending until Admin approves it.</div>
+  <form id="adform">
+   <label>Product name</label>
+   <input id="title" required placeholder="e.g. Nexun Smart LED TV">
+   <div class="formgrid">
+    <div><label>Price (PKR)</label><input id="price" type="number" min="0" required></div>
+    <div><label>Category</label><select id="category" required></select></div>
+    <div><label>City</label>
+     <select id="adcity" required>
+      <option value="">Choose city</option>
+      <option>Lahore</option><option>Karachi</option>
+      <option>Islamabad</option><option>Peshawar</option>
+      <option>Quetta</option><option>Multan</option>
+      <option>Faisalabad</option><option>Other</option>
+     </select>
     </div>
-    <h2>Post Free Ad</h2>
-    <form onsubmit="postAd(event)">
-      <input id="title" placeholder="Product name" required>
-      <input id="price" type="number" placeholder="Price in PKR" required>
-      <select id="newcity" required>
-        <option value="">Select City</option>
-        <option>Lahore</option><option>Karachi</option>
-        <option>Islamabad</option><option>Peshawar</option>
-      </select>
-      <button type="submit">Submit Ad</button>
-    </form>
-    <div id="message"></div>
-    <p><small>Demo only. Real accounts, admin approval and online database are not connected.</small></p>
-  </main>
-  <script>
-    function filterAds() {
-      const q = document.getElementById('search').value.toLowerCase();
-      const city = document.getElementById('city').value;
-      document.querySelectorAll('#ads .card').forEach(card => {
-        card.style.display =
-          card.innerText.toLowerCase().includes(q) &&
-          (!city || card.dataset.city === city) ? '' : 'none';
-      });
-    }
-    function postAd(e) {
-      e.preventDefault();
-      document.getElementById('message').innerHTML =
-        '<div class="card">Ad submitted as Pending Admin Review. This is a demo only.</div>';
-      e.target.reset();
-    }
-  </script>
+    <div><label>Seller name</label><input id="seller" required></div>
+   </div>
+   <label>Description</label>
+   <textarea id="description" rows="4" required placeholder="Product details and condition"></textarea>
+   <label>Contact number (optional)</label>
+   <input id="phone" inputmode="tel" placeholder="03xx xxxxxxx">
+   <button class="blue" type="submit">Submit for Approval</button>
+  </form>
+  <p id="postmessage"></p>
+ </div>
+</section>
+
+<section id="myads" class="hidden">
+ <div class="panel">
+  <h2>My Ads</h2>
+  <p class="small">Ads submitted in this browser are listed here.</p>
+  <div id="mylist"></div>
+ </div>
+</section>
+
+<section id="admin" class="hidden">
+ <div class="panel">
+  <h2>Admin Dashboard</h2>
+  <div class="notice">Demo only: this panel has no secure admin login. Do not use it for real customer data.</div>
+  <div class="categories">
+   <div class="category">Pending <h2 id="pendingCount">0</h2></div>
+   <div class="category">Published <h2 id="publishedCount">0</h2></div>
+   <div class="category">Rejected <h2 id="rejectedCount">0</h2></div>
+   <div class="category">Total Ads <h2 id="totalCount">0</h2></div>
+  </div>
+  <h2>Review Ads</h2>
+  <div class="row">
+   <button onclick="adminFilter='Pending';renderAdmin()">Pending</button>
+   <button onclick="adminFilter='Published';renderAdmin()">Published</button>
+   <button onclick="adminFilter='Rejected';renderAdmin()">Rejected</button>
+   <button onclick="adminFilter='All';renderAdmin()">All Ads</button>
+  </div>
+  <div id="adminlist"></div>
+ </div>
+</section>
+
+<section id="brands" class="hidden">
+ <div class="panel">
+  <h2>Brand / Category Request</h2>
+  <p class="small">Send a request to Admin. In the real marketplace, only Admin can add brands or categories after review.</p>
+  <form id="brandform">
+   <label>Your name</label><input id="brandname" required>
+   <label>Requested brand or category</label><input id="brandrequest" required placeholder="e.g. Nexun">
+   <label>Details</label><textarea id="branddetails" rows="3"></textarea>
+   <button class="blue" type="submit">Submit Request</button>
+  </form>
+  <div id="brandlist"></div>
+ </div>
+</section>
+</main>
+
+<footer>Apna Market Pakistan · HTML Demo · Real accounts, online chat and shared database are not connected.</footer>
+
+<script>
+const cats=[
+ ['Electronics','📺'],['Mobiles','📱'],['Home Appliances','🧺'],
+ ['Furniture','🛋️'],['Vehicles','🚗'],['Property','🏠'],
+ ['Fashion','👕'],['Kitchen','🍳'],['Computers','💻'],
+ ['Tools','🧰'],['Sports','⚽'],['Other','📦']
+];
+
+const starter=[
+ {id:1,title:'32 Inch Smart LED TV',price:25000,category:'Electronics',city:'Lahore',seller:'Demo Seller',description:'Sample Smart LED TV listing.',status:'Published',icon:'📺',sample:true},
+ {id:2,title:'Android Mobile Phone',price:32000,category:'Mobiles',city:'Karachi',seller:'Demo Seller',description:'Sample mobile phone listing.',status:'Published',icon:'📱',sample:true},
+ {id:3,title:'Wooden Furniture Set',price:18000,category:'Furniture',city:'Islamabad',seller:'Demo Seller',description:'Sample furniture listing.',status:'Published',icon:'🛋️',sample:true},
+ {id:4,title:'Washing Machine',price:22000,category:'Home Appliances',city:'Peshawar',seller:'Demo Seller',description:'Sample appliance listing.',status:'Published',icon:'🧺',sample:true}
+];
+
+function load(key,fallback){
+ try {const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}
+ catch(e){return fallback}
+}
+let ads=load('apnaAds',starter);
+let requests=load('apnaRequests',[]);
+let selectedCategory='';
+let adminFilter='Pending';
+
+function save(){
+ try{
+  localStorage.setItem('apnaAds',JSON.stringify(ads));
+  localStorage.setItem('apnaRequests',JSON.stringify(requests));
+ }catch(e){}
+}
+function esc(s){
+ return String(s??'').replace(/[&<>"']/g,c=>({
+ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ })[c]);
+}
+function money(n){return 'Rs '+Number(n||0).toLocaleString('en-PK')}
+
+function page(name,btn){
+ document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
+ document.getElementById(name).classList.remove('hidden');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ if(btn)btn.classList.add('active');
+ if(name==='myads')renderMyAds();
+ if(name==='admin')renderAdmin();
+ if(name==='brands')renderBrands();
+}
+function makeCategories(){
+ document.getElementById('categories').innerHTML=cats.map(c=>
+  `<div class="category" onclick="categoryFilter('${c[0]}')"><span>${c[1]}</span>${c[0]}</div>`
+ ).join('');
+ document.getElementById('category').innerHTML='<option value="">Choose category</option>'+
+ cats.map(c=>`<option>${c[0]}</option>`).join('');
+}
+function categoryFilter(c){selectedCategory=c;render()}
+function render(){
+ const q=document.getElementById('query').value.toLowerCase();
+ const city=document.getElementById('city').value;
+ const list=ads.filter(a=>a.status==='Published'&&
+  (!q||(a.title+' '+a.category+' '+a.description).toLowerCase().includes(q))&&
+  (!city||a.city===city)&&(!selectedCategory||a.category===selectedCategory));
+ document.getElementById('products').innerHTML=list.length?list.map(a=>
+ `<article class="card">
+  <div style="font-size:42px;text-align:center;padding:8px">${a.icon||'📦'}</div>
+  <h3>${esc(a.title)}</h3>
+  <div class="price">${money(a.price)}</div>
+  <div class="small">📍 ${esc(a.city)} · ${esc(a.category)}<br>Seller: ${esc(a.seller)}</div>
+  <div class="row">
+   <button class="blue" onclick="details(${a.id})">Details</button>
+   <button onclick="contact(${a.id})">Contact</button>
+  </div>
+ </article>`).join(''):'<div class="panel">No matching ads found.</div>';
+}
+function details(id){
+ const a=ads.find(x=>x.id===id);
+ if(a)alert(a.title+'\nPrice: '+money(a.price)+'\nCity: '+a.city+'\nCategory: '+a.category+'\nSeller: '+a.seller+'\n\n'+a.description);
+}
+function contact(id){
+ const a=ads.find(x=>x.id===id);
+ if(a)alert('Seller: '+a.seller+(a.phone?'\nPhone: '+a.phone:'')+'\n\nDemo only: live chat is not connected.');
+}
+
+document.getElementById('adform').addEventListener('submit',e=>{
+ e.preventDefault();
+ const category=document.getElementById('category').value;
+ const item=cats.find(c=>c[0]===category);
+ ads.unshift({
+  id:Date.now(),
+  title:document.getElementById('title').value.trim(),
+  price:Number(document.getElementById('price').value),
+  category,city:document.getElementById('adcity').value,
+  seller:document.getElementById('seller').value.trim(),
+  description:document.getElementById('description').value.trim(),
+  phone:document.getElementById('phone').value.trim(),
+  status:'Pending',icon:item?item[1]:'📦',sample:false
+ });
+ save();
+ e.target.reset();
+ document.getElementById('postmessage').textContent='Ad submitted. It is Pending Admin approval.';
+ page('myads',document.querySelectorAll('nav button')[2]);
+});
+
+function renderMyAds(){
+ const list=ads.filter(a=>!a.sample);
+ document.getElementById('mylist').innerHTML=list.length?list.map(a=>
+ `<div class="card">
+  <h3>${esc(a.title)} <span class="status ${a.status}">${a.status}</span></h3>
+  <p>${money(a.price)} · ${esc(a.city)} · ${esc(a.category)}</p>
+  <p class="small">${esc(a.description)}</p>
+ </div>`).join(''):'<p>No ads submitted in this browser yet.</p>';
+}
+function renderAdmin(){
+ document.getElementById('pendingCount').textContent=ads.filter(a=>a.status==='Pending').length;
+ document.getElementById('publishedCount').textContent=ads.filter(a=>a.status==='Published').length;
+ document.getElementById('rejectedCount').textContent=ads.filter(a=>a.status==='Rejected').length;
+ document.getElementById('totalCount').textContent=ads.length;
+ const list=ads.filter(a=>adminFilter==='All'||a.status===adminFilter);
+ document.getElementById('adminlist').innerHTML=list.length?list.map(a=>
+ `<div class="card" style="margin-top:10px">
+  <h3>${esc(a.title)} <span class="status ${a.status}">${a.status}</span></h3>
+  <p>${money(a.price)} · ${esc(a.category)} · ${esc(a.city)}</p>
+  <p class="small">Seller: ${esc(a.seller)}<br>${esc(a.description)}</p>
+  <div class="row">
+   ${a.status!=='Published'?`<button class="green" onclick="setStatus(${a.id},'Published')">Approve</button>`:''}
+   ${a.status!=='Rejected'?`<button class="red" onclick="setStatus(${a.id},'Rejected')">Reject</button>`:''}
+   ${a.status!=='Pending'?`<button onclick="setStatus(${a.id},'Pending')">Set Pending</button>`:''}
+  </div>
+ </div>`).join(''):'<p>No ads in this section.</p>';
+}
+function setStatus(id,status){
+ const a=ads.find(x=>x.id===id);
+ if(a){a.status=status;save();renderAdmin();render()}
+}
+document.getElementById('brandform').addEventListener('submit',e=>{
+ e.preventDefault();
+ requests.unshift({
+  name:document.getElementById('brandname').value.trim(),
+  request:document.getElementById('brandrequest').value.trim(),
+  details:document.getElementById('branddetails').value.trim(),
+  status:'Pending review',date:new Date().toLocaleDateString()
+ });
+ save();e.target.reset();renderBrands();
+});
+function renderBrands(){
+ document.getElementById('brandlist').innerHTML=requests.length?
+ '<h2>Saved Requests</h2>'+requests.map(r=>
+ `<div class="card"><b>${esc(r.request)}</b><p class="small">From: ${esc(r.name)} · ${esc(r.date)}</p><p>${esc(r.details)}</p><span class="status">${esc(r.status)}</span></div>`
+ ).join(''):'<p class="small">No brand requests yet.</p>';
+}
+makeCategories();
+render();
+</script>
 </body>
 </html>
